@@ -4,9 +4,9 @@ FROM $BUILD_FROM
 # 安裝必要套件
 RUN apk add --no-cache python3 py3-pip curl bash
 
-# 安裝 Python 依賴
+# 安裝 Python 依賴（使用 --break-system-packages 繞過 PEP 668）
 COPY requirements.txt /tmp/
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 
 # 複製檔案
 COPY rootfs /
