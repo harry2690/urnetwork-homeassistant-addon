@@ -8,7 +8,6 @@ arch:
   - armv7
   - aarch64
   - amd64
-  - i386
 init: false
 map:
   - addon_config:rw
