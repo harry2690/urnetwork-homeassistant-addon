@@ -30,6 +30,8 @@ jobs:
       - name: Get information
         id: information
         uses: home-assistant/actions/helpers/info@master
+        with:
+          path: "./urnetwork"
 
   build:
     name: Build ${{ matrix.arch }} add-on
@@ -54,7 +56,7 @@ jobs:
         with:
           args: |
             --${{ matrix.arch }} \
-            --target /data \
+            --target urnetwork \
             --docker-hub ghcr.io/${{ github.repository_owner }} \
             --addon
 
@@ -79,7 +81,7 @@ jobs:
         with:
           args: |
             --all \
-            --target /data \
+            --target urnetwork \
             --docker-hub ghcr.io/${{ github.repository_owner }} \
             --addon \
             --push
