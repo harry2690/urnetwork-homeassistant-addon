@@ -3,11 +3,9 @@ build_from:
   amd64: "ghcr.io/hassio-addons/base/amd64:15.0.7"
   armhf: "ghcr.io/hassio-addons/base/armhf:15.0.7"
   armv7: "ghcr.io/hassio-addons/base/armv7:15.0.7"
-  i386: "ghcr.io/hassio-addons/base/i386:15.0.7"
+  # 移除 i386 這行
 labels:
   org.opencontainers.image.title: "URnetwork Provider"
-  org.opencontainers.image.description: "URnetwork community provider add-on"
-  org.opencontainers.image.source: "https://github.com/urnetwork/home-assistant-addon"
+  org.opencontainers.image.description: "URnetwork community provider add-on for Home Assistant"
+  org.opencontainers.image.source: "https://github.com/harry2690/urnetwork-homeassistant-addon"
   org.opencontainers.image.licenses: "MIT"
-args:
-  TEMPIO_VERSION: "2021.09.0"

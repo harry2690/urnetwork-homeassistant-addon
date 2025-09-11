@@ -1,13 +1,14 @@
-name: URnetwork Provider
-version: "1.0.0"
+oname: URnetwork Provider
+version: "1.0.3"
 slug: urnetwork_provider
 description: "URnetwork community provider add-on for Home Assistant"
 url: "https://github.com/harry2690/urnetwork-homeassistant-addon"
 arch:
-  - armhf
-  - armv7
   - aarch64
   - amd64
+  - armhf
+  - armv7
+  # 移除 i386
 init: false
 map:
   - addon_config:rw
@@ -41,4 +42,3 @@ panel_icon: mdi:network
 panel_title: URnetwork Provider
 panel_admin: true
 startup: services
-image: "ghcr.io/harry2690/urnetwork-addon-{arch}"
