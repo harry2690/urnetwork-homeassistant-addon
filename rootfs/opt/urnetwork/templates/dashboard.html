@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URnetwork Provider 控制台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">
+            <i class="fas fa-network-wired"></i> URnetwork Provider 控制台
+        </h1>
+        
+        <!-- 狀態卡片 -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">狀態</h5>
+                        <p class="card-text" id="status">
+                            {% if status.status == 'running' %}
+                                <i class="fas fa-check-circle"></i> 運行中
+                            {% else %}
+                                <i class="fas fa-times-circle"></i> 未運行
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">總獎勵</h5>
+                        <p class="card-text" id="earnings">
+                            ${{ stats.total_earnings or '0.00' }} USDC
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">運行時間</h5>
+                        <p class="card-text" id="uptime">
+                            {{ stats.uptime or '未知' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">流量貢獻</h5>
+                        <p class="card-text" id="traffic">
+                            {{ stats.traffic_served or '0 MB' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 控制按鈕 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-success" onclick="controlProvider('start')">
+                        <i class="fas fa-play"></i> 啟動
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="controlProvider('stop')">
+                        <i class="fas fa-stop"></i> 停止
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="controlProvider('restart')">
+                        <i class="fas fa-redo"></i> 重啟
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="controlProvider('update')">
+                        <i class="fas fa-download"></i> 更新
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 日誌區域 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">系統日誌</h5>
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshLogs()">
+                            <i class="fas fa-refresh"></i> 重新整理
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <pre id="logs" style="height: 300px; overflow-y: auto; background-color: #f8f9fa;">
+載入中...
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 控制 Provider
+        function controlProvider(action) {
+            fetch(`/api/provider/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('錯誤: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('操作失敗: ' + error);
+            });
+        }
+        
+        // 重新整理日誌
+        function refreshLogs() {
+            fetch('/api/logs')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('logs').textContent = data.logs;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('logs').textContent = '無法載入日誌: ' + error;
+            });
+        }
+        
+        // 自動重新整理狀態
+        setInterval(function() {
+            fetch('/api/status')
+            .then(response => response.json())
+            .then(data => {
+                // 更新狀態顯示
+                updateStatusDisplay(data);
+            })
+            .catch(error => {
+                console.error('Status update error:', error);
+            });
+        }, 30000); // 每 30 秒更新一次
+        
+        // 頁面載入時取得日誌
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshLogs();
+        });
+    </script>
+</body>
+</html>

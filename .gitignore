@@ -1,0 +1,65 @@
+# 測試配置檔案和認證資訊
+test-config/
+*.bak
+
+# Python 相關
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE 和編輯器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系統檔案
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日誌檔案
+*.log
+
+# Docker 相關
+*.tar
+docker-compose.override.yml
+
+# 臨時檔案
+*.tmp
+*.temp
+
+# 認證和敏感資料
+*.jwt
+*.token
+auth_info.json
+credentials
+.urnetwork/
+secrets.yaml
+
+# 建置產物
+dist/
+build/
+*.egg-info/
+
+# 測試產物
+.coverage
+.pytest_cache/
+htmlcov/
+
+# 環境變數檔案
+.env
+.env.local
+.env.*.local
