@@ -1,6 +1,6 @@
 name: URnetwork Provider
 version: "1.0.7"
-slug: urnetwork_provider
+slug: urnetwork-addon
 description: "URnetwork community provider add-on for Home Assistant"
 url: "https://github.com/harry2690/urnetwork-homeassistant-addon"
 arch:
