@@ -1,14 +1,10 @@
-oname: URnetwork Provider
-version: "1.0.3"
+name: URnetwork Provider
+version: "1.0.5"
 slug: urnetwork_provider
 description: "URnetwork community provider add-on for Home Assistant"
 url: "https://github.com/harry2690/urnetwork-homeassistant-addon"
 arch:
-  - aarch64
   - amd64
-  - armhf
-  - armv7
-  # 移除 i386
 init: false
 map:
   - addon_config:rw
