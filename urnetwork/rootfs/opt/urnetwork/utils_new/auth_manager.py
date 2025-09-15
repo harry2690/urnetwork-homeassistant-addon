@@ -101,10 +101,6 @@ class AuthManager:
                 logger.info("Docker available for fallback auth")
         except Exception as e:
             logger.info(f"Docker version check failed: {e}")
-
-        # 方法 6: 手動認證 - 作為最後的備案
-        self.auth_methods.append(("manual_auth", "manual"))
-        logger.info("Manual authentication method always available")
         
         # 方法 6: 檢查是否在 Home Assistant 環境中有特殊的認證方式
         ha_auth_paths = [
@@ -135,54 +131,18 @@ class AuthManager:
     def is_authenticated(self) -> bool:
         """檢查是否已完成認證"""
         try:
-            # 方法 1: 檢查固定的認證檔案名稱
+            # 方法 1: 檢查認證檔案是否存在
             auth_files = [
                 self.jwt_file,
                 os.path.join(self.config_path, "token"),
                 os.path.join(self.config_path, "auth"),
                 os.path.join(self.config_path, "credentials"),
             ]
-
+            
             for auth_file in auth_files:
                 if os.path.exists(auth_file) and os.path.getsize(auth_file) > 0:
                     logger.info(f"Found auth file: {os.path.basename(auth_file)}")
                     return True
-
-            # 方法 1.5: 檢查配置目錄中的所有檔案，尋找可能的認證檔案
-            if os.path.exists(self.config_path):
-                try:
-                    all_files = os.listdir(self.config_path)
-                    logger.info(f"Files in config directory: {all_files}")
-
-                    # 檢查是否有任何非空檔案（除了 auth_info.json）
-                    for filename in all_files:
-                        if filename in ['auth_info.json', '.', '..']:
-                            continue
-
-                        filepath = os.path.join(self.config_path, filename)
-                        if os.path.isfile(filepath) and os.path.getsize(filepath) > 0:
-                            # 檢查檔案內容是否像認證檔案
-                            try:
-                                with open(filepath, 'r') as f:
-                                    content = f.read(100)  # 只讀前100個字符
-
-                                # 如果包含這些關鍵字，可能是認證檔案
-                                auth_indicators = ['jwt', 'token', 'bearer', 'auth', 'urnetwork']
-                                content_lower = content.lower()
-
-                                if any(indicator in content_lower for indicator in auth_indicators) or len(content.strip()) > 20:
-                                    logger.info(f"Found potential auth file: {filename} (size: {os.path.getsize(filepath)} bytes)")
-                                    return True
-
-                            except Exception as e:
-                                logger.debug(f"Cannot read {filename}: {e}")
-                                # 如果檔案存在但不能讀取，也可能是認證檔案
-                                if os.path.getsize(filepath) > 10:
-                                    logger.info(f"Found non-readable file that might be auth: {filename}")
-                                    return True
-
-                except Exception as e:
-                    logger.warning(f"Error listing config directory: {e}")
             
             # 方法 2: 檢查 auth_info.json 中的成功狀態
             if os.path.exists(self.auth_info_file):
@@ -204,20 +164,7 @@ class AuthManager:
                 except Exception as e:
                     logger.warning(f"Error reading auth info: {e}")
             
-            # 方法 3: 檢查 URnetwork 容器是否正在運行並已連接
-            try:
-                # 檢查是否有正在運行的 urnetwork-provider 容器
-                cmd = ["docker", "ps", "--filter", "name=urnetwork-provider", "--format", "{{.Status}}"]
-                result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-
-                if result.returncode == 0 and "Up" in result.stdout:
-                    logger.info("URnetwork container is running - assuming authenticated")
-                    return True
-
-            except Exception as e:
-                logger.debug(f"Container status check failed: {e}")
-
-            # 方法 4: 嘗試使用 Docker 容器檢查認證狀態
+            # 方法 3: 嘗試使用 Docker 容器檢查認證狀態
             if hasattr(self, 'auth_methods') and any(method[0] == 'docker_in_docker' for method in self.auth_methods):
                 try:
                     cmd = [
@@ -226,9 +173,9 @@ class AuthManager:
                         "bringyour/community-provider:g4-latest",
                         "status"  # 或其他檢查狀態的命令
                     ]
-
+                    
                     result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
-
+                    
                     # 檢查輸出是否表示已認證
                     if result.returncode == 0:
                         status_indicators = ["authenticated", "logged in", "valid token"]
@@ -245,28 +192,6 @@ class AuthManager:
             logger.error(f"Error checking authentication status: {e}")
             return False
     
-    def force_docker_auth(self, auth_code: str) -> Dict[str, Any]:
-        """強制使用 Docker-in-Docker 重新認證"""
-        try:
-            logger.info("Forcing Docker-in-Docker authentication")
-
-            # 清除舊的認證檔案
-            self._clear_auth_files()
-            time.sleep(1)
-
-            # 嘗試 Docker-in-Docker 認證
-            result = self._authenticate_docker_in_docker(auth_code)
-            if result["success"]:
-                logger.info("Forced Docker authentication successful")
-                return result
-            else:
-                logger.error(f"Forced Docker authentication failed: {result.get('error')}")
-                return result
-
-        except Exception as e:
-            logger.error(f"Force Docker auth error: {e}")
-            return {"success": False, "error": str(e)}
-
     def authenticate(self, auth_code: str) -> Dict[str, Any]:
         """執行認證"""
         try:
@@ -281,13 +206,11 @@ class AuthManager:
             # 嘗試各種認證方式
             for method_type, method_path in self.auth_methods:
                 logger.info(f"Trying authentication method: {method_type}")
-
+                
                 if method_type in ["direct_binary", "direct_command", "builtin_binary"]:
                     result = self._authenticate_direct(auth_code, method_path)
                 elif method_type == "docker_in_docker":
                     result = self._authenticate_docker_in_docker(auth_code)
-                elif method_type == "manual_auth":
-                    result = self._authenticate_manual(auth_code)
                 else:
                     continue
                 
@@ -472,56 +395,7 @@ class AuthManager:
         except Exception as e:
             logger.error(f"Docker-in-Docker auth error: {e}")
             return {"success": False, "error": str(e)}
-
-    def _authenticate_manual(self, auth_code: str) -> Dict[str, Any]:
-        """手動認證方法 - 創建基本的認證檔案"""
-        try:
-            logger.info("Trying manual authentication")
-
-            # 驗證授權碼基本格式
-            if len(auth_code) < 50:
-                return {"success": False, "error": "授權碼長度不足"}
-
-            # 創建基本的 JWT 檔案（模擬格式）
-            try:
-                import base64
-                # 創建一個簡單的 JWT 格式檔案
-                jwt_content = {
-                    "auth_code": auth_code[:50] + "...",  # 只保存部分授權碼
-                    "timestamp": time.time(),
-                    "method": "manual",
-                    "status": "authenticated"
-                }
-
-                # 將認證信息保存到 JWT 檔案
-                jwt_data = json.dumps(jwt_content).encode()
-                jwt_encoded = base64.b64encode(jwt_data).decode()
-
-                with open(self.jwt_file, 'w') as f:
-                    f.write(jwt_encoded)
-
-                # 創建額外的認證標記檔案
-                token_file = os.path.join(self.config_path, "token")
-                with open(token_file, 'w') as f:
-                    f.write(f"manual_auth_{int(time.time())}")
-
-                logger.info("Manual authentication files created")
-
-                # 檢查檔案是否創建成功
-                if self._check_auth_files_created():
-                    self._save_auth_info(auth_code, "manual_auth")
-                    return {"success": True, "message": "手動認證成功 - 請注意這是簡化的認證方式"}
-                else:
-                    return {"success": False, "error": "認證檔案創建失敗"}
-
-            except Exception as e:
-                logger.warning(f"Manual auth file creation failed: {e}")
-                return {"success": False, "error": f"手動認證失敗: {str(e)}"}
-
-        except Exception as e:
-            logger.error(f"Manual auth error: {e}")
-            return {"success": False, "error": str(e)}
-
+    
     def _check_auth_files_created(self) -> bool:
         """檢查認證檔案是否建立"""
         try:

@@ -13,13 +13,11 @@ class DockerManager:
     
     def __init__(self):
         """初始化 Docker 客戶端"""
-        # 先設定基本屬性
-        self.container_name = "urnetwork-provider"
-        self.image_name = "bringyour/community-provider:g4-latest"
-        self.config_path = "/addon_config/.urnetwork"
-
         try:
             self.client = docker.from_env()
+            self.container_name = "urnetwork-provider"
+            self.image_name = "bringyour/community-provider:g4-latest"
+            self.config_path = "/addon_config/.urnetwork"
             logger.info("Docker client initialized successfully")
         except Exception as e:
             logger.error(f"Docker client initialization failed: {e}")
@@ -41,9 +39,6 @@ class DockerManager:
     def start_provider(self) -> Dict[str, Any]:
         """啟動 Provider"""
         try:
-            if self.client is None:
-                return {"success": False, "error": "Docker 連接失敗，無法啟動 Provider"}
-
             container = self.get_container()
             
             if container is None:
@@ -65,9 +60,6 @@ class DockerManager:
     def stop_provider(self) -> Dict[str, Any]:
         """停止 Provider"""
         try:
-            if self.client is None:
-                return {"success": False, "error": "Docker 連接失敗，無法停止 Provider"}
-
             container = self.get_container()
             
             if container and container.status == "running":
@@ -84,9 +76,6 @@ class DockerManager:
     def restart_provider(self) -> Dict[str, Any]:
         """重啟 Provider"""
         try:
-            if self.client is None:
-                return {"success": False, "error": "Docker 連接失敗，無法重啟 Provider"}
-
             container = self.get_container()
             
             if container:
@@ -103,9 +92,6 @@ class DockerManager:
     def update_provider(self) -> Dict[str, Any]:
         """更新 Provider 映像檔"""
         try:
-            if self.client is None:
-                return {"success": False, "error": "Docker 連接失敗，無法更新 Provider"}
-
             logger.info("Updating URnetwork provider image")
             
             # 停止現有容器
@@ -127,13 +113,6 @@ class DockerManager:
     def get_status(self) -> Dict[str, Any]:
         """獲取 Provider 狀態"""
         try:
-            if self.client is None:
-                return {
-                    "status": "docker_unavailable",
-                    "message": "Docker 連接失敗",
-                    "error": "無法連接到 Docker daemon"
-                }
-
             container = self.get_container()
             
             if container is None:
@@ -192,9 +171,6 @@ class DockerManager:
     def _create_container(self) -> Dict[str, Any]:
         """建立新的 URnetwork 容器"""
         try:
-            if self.client is None:
-                return {"success": False, "error": "Docker 連接失敗，無法創建容器"}
-
             # 確保配置目錄存在
             subprocess.run(f"mkdir -p {self.config_path}", shell=True, check=True)
             

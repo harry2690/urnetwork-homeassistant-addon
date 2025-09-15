@@ -80,32 +80,6 @@
                     <button type="button" class="btn btn-info" onclick="controlProvider('update')">
                         <i class="fas fa-download"></i> 更新
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="showReAuthModal()">
-                        <i class="fas fa-key"></i> 重新認證
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 重新認證模態框 -->
-        <div class="modal fade" id="reAuthModal" tabindex="-1" aria-labelledby="reAuthModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="reAuthModalLabel">重新認證 URnetwork</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>如果容器出現認證失敗的錯誤，請使用您的原始認證碼重新進行 Docker 認證。</p>
-                        <div class="mb-3">
-                            <label for="authCodeInput" class="form-label">認證碼</label>
-                            <textarea class="form-control" id="authCodeInput" rows="8" placeholder="請輸入您的 URnetwork 認證碼"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary" onclick="performReAuth()">重新認證</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -167,58 +141,7 @@
                 document.getElementById('logs').textContent = '無法載入日誌: ' + error;
             });
         }
-
-        // 顯示重新認證模態框
-        function showReAuthModal() {
-            const modal = new bootstrap.Modal(document.getElementById('reAuthModal'));
-            modal.show();
-        }
-
-        // 執行重新認證
-        function performReAuth() {
-            const authCode = document.getElementById('authCodeInput').value.trim();
-            if (!authCode) {
-                alert('請輸入認證碼');
-                return;
-            }
-
-            // 顯示載入狀態
-            const button = event.target;
-            const originalText = button.textContent;
-            button.textContent = '重新認證中...';
-            button.disabled = true;
-
-            fetch('/api/force-docker-auth', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ auth_code: authCode })
-            })
-            .then(response => response.json())
-            .then(data => {
-                button.textContent = originalText;
-                button.disabled = false;
-
-                if (data.success) {
-                    alert('重新認證成功！容器將使用新的認證資訊。');
-                    // 關閉模態框
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('reAuthModal'));
-                    modal.hide();
-                    // 重新載入頁面
-                    location.reload();
-                } else {
-                    alert('重新認證失敗: ' + data.error);
-                }
-            })
-            .catch(error => {
-                button.textContent = originalText;
-                button.disabled = false;
-                console.error('Error:', error);
-                alert('重新認證失敗: ' + error);
-            });
-        }
-
+        
         // 自動重新整理狀態
         setInterval(function() {
             fetch('/api/status')

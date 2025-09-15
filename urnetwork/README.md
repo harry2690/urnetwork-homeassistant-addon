@@ -1,79 +1,150 @@
 # URnetwork Provider Add-on
 
-URnetwork 社群提供者插件讓你的 Home Assistant 成為 URnetwork 網路的一部分，共享網路資源並賺取收益。
+**[中文版 README](https://github.com/harry2690/urnetwork-homeassistant-addon/blob/main/README_CN.md)**
 
-## 功能特色
+Turn your Home Assistant into a URnetwork provider, contribute to the decentralized network and earn USDC rewards.
 
-- 🌐 成為 URnetwork 社群提供者
-- 💰 透過共享網路資源賺取收益
-- 📊 即時監控連線狀態和統計資料
-- 🔒 安全的認證機制
-- 🎛️ 簡單易用的 Web 管理介面
+## Installation Steps
 
-## 安裝步驟
+### 1. Add Add-on Repository
 
-1. 將此儲存庫加入到你的 Home Assistant Add-on 商店
-2. 安裝 "URnetwork Provider" 插件
-3. 啟動插件
-4. 透過 Web 介面進行初始設定
+In Home Assistant:
 
-## 配置選項
+1. Go to **Settings** → **Add-ons** → **Add-on Store**
+2. Click the three-dot menu in the top right corner
+3. Select **Repositories**
+4. Add this repository URL: `https://github.com/harry2690/urnetwork-homeassistant-addon`
+5. Click **Add**
 
-### 基本設定
+### 2. Install Add-on
 
-- **ssl**: 是否啟用 SSL (預設: false)
-- **certfile**: SSL 憑證檔案名稱
-- **keyfile**: SSL 私鑰檔案名稱
-- **web_port**: Web 介面埠號 (預設: 8099)
-- **log_level**: 日誌記錄等級
+1. Refresh the Add-on Store
+2. Find **URnetwork Provider**
+3. Click **Install**
+4. Wait for installation to complete
 
-### 網路設定
+### 3. Important: Disable Protection Mode
 
-插件需要網路存取權限來連接 URnetwork 服務。
+⚠️ **This step is critical** - URnetwork Add-on requires Docker access to manage containers
 
-## 使用方式
+1. In the Add-on page, click the **Configuration** tab
+2. **Turn off "Protection mode"** option
+3. Click **Save**
 
-1. **初始設定**: 啟動插件後，透過 Web 介面進行認證
-2. **輸入授權碼**: 從 URnetwork 官網取得授權碼並輸入
-3. **監控狀態**: 查看連線狀態和收益統計
-4. **管理設定**: 調整網路共享參數
+### 4. Start Add-on
 
-## 認證流程
+1. Return to the **Info** tab
+2. Click **Start**
+3. Optional: Enable **Start on boot** for automatic startup
+4. Optional: Enable **Watchdog** for automatic restart
 
-1. 訪問插件的 Web 介面
-2. 輸入從 URnetwork 取得的授權碼
-3. 系統會自動驗證並建立連線
-4. 認證成功後即可開始提供服務
+## Configuration Options
 
-## 故障排除
+You can adjust the following settings in the Add-on's **Configuration** page:
 
-### 認證失敗
-- 確認授權碼正確
-- 檢查網路連線
-- 查看日誌檔案了解詳細錯誤
+```yaml
+ssl: false                 # Whether to enable SSL
+certfile: fullchain.pem    # SSL certificate file
+keyfile: privkey.pem       # SSL private key file
+web_port: 8099            # Web UI port
+log_level: info           # Log level (trace/debug/info/notice/warning/error/fatal)
+```
 
-### 連線問題
-- 確認防火牆設定
-- 檢查網路配置
-- 重新啟動插件
+### Default Configuration
 
-### 效能問題
-- 調整資源配置
-- 監控系統負載
-- 檢查網路頻寬
+In most cases, the default settings work fine. You don't need to modify the configuration unless you have special requirements.
 
-## 支援與回饋
+## Authentication Process
 
-如有問題或建議，請至 GitHub Issues 回報。
+### 1. Get Authentication Code
 
-## 授權條款
+1. Visit [ur.io](https://ur.io)
+2. Register or log in to your account
+3. Get your Authentication Code
 
-MIT License
+### 2. Initial Authentication
 
-## 版本紀錄
+1. After starting the Add-on, click **Open Web UI**
+2. You'll see the setup page
+3. Enter the authentication code from ur.io
+4. Click **Authenticate**
+5. Wait for authentication to complete
 
-### v1.0.0
-- 初始版本發布
-- 基本認證功能
-- Web 管理介面
-- 狀態監控
+### 3. Re-authentication (if needed)
+
+If you encounter authentication issues:
+
+1. Click the **Re-authenticate** button in the Dashboard
+2. Enter your original authentication code
+3. The system will perform real Docker authentication
+4. Restart the Provider container after completion
+
+### 4. Verify Connection
+
+After authentication:
+- Check container status in the Dashboard
+- Visit [ur.io](https://ur.io) to confirm your client shows as "Connected"
+- Check system logs to ensure no authentication errors
+
+## Web UI Features
+
+Access the Web UI at `http://[HOME_ASSISTANT_IP]:8099`
+
+- **Dashboard**: Monitor Provider status and rewards
+- **Container Control**: Start, stop, restart, update URnetwork Provider
+- **System Logs**: View runtime logs and error messages
+- **Re-authentication**: Re-authenticate when encountering authentication issues
+
+## Common Issues
+
+### Container Won't Start
+
+1. Confirm protection mode is disabled
+2. Check if Docker service is running normally
+3. Check Add-on logs for error messages
+
+### Authentication Failure
+
+1. Confirm authentication code is correct
+2. Use "Re-authenticate" function
+3. Confirm network connection is normal
+
+### Cannot Access Web UI
+
+1. Check port settings (default 8099)
+2. Confirm firewall settings
+3. Try restarting the Add-on
+
+## Support & Feedback
+
+### Report Issues
+
+If you encounter problems:
+
+1. Check Add-on logs
+2. Report to [GitHub Issues](https://github.com/harry2690/urnetwork-homeassistant-addon/issues)
+3. Provide detailed error messages and logs
+
+### Sponsorship
+
+Welcome to join ur.io with my referral code: [https://ur.io/app?bonus=J8C8CV](https://ur.io/app?bonus=J8C8CV)
+
+Or buy me a coffee: [BASE Chain] 0x040F0037C6a4C28DC504d718Ca9329eFBF6fD8d1
+
+### Community Support
+
+- URnetwork Official Documentation: [ur.io](https://ur.io)
+- Home Assistant Community Discussion
+
+## License
+
+This project is licensed under the MIT License.
+
+### Third-party Licenses
+
+- URnetwork Provider: Please refer to URnetwork official license terms
+- Home Assistant Add-on Framework: Apache 2.0 License
+
+---
+
+**Disclaimer**: Before using this Add-on, please ensure you understand URnetwork's terms of service and privacy policy. Network provider services may consume your network bandwidth and electricity.

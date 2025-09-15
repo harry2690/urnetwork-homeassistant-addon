@@ -1,5 +1,5 @@
 name: URnetwork Provider
-version: "1.0.14"
+version: "1.0.25"
 slug: urnetwork-addon
 description: "URnetwork community provider add-on for Home Assistant"
 url: "https://github.com/harry2690/urnetwork-homeassistant-addon"
@@ -8,9 +8,10 @@ arch:
   - amd64
   - armhf
   - armv7
-init: false
+startup: application
 map:
   - addon_config:rw
+  - /var/run/docker.sock:/var/run/docker.sock
 options:
   ssl: false
   certfile: fullchain.pem
@@ -35,10 +36,4 @@ hassio_api: true
 hassio_role: default
 homeassistant_api: false
 auth_api: false
-ingress: true
-ingress_port: 8099
-panel_icon: mdi:network
-panel_title: URnetwork Provider
-panel_admin: true
-startup: services
-image: "ghcr.io/harry2690/urnetwork-addon"
+webui: "http://[HOST]:[PORT:8099]/"
