@@ -59,8 +59,8 @@ jobs:
         with:
           args: |
             --${{ matrix.arch }} \
-            --target /data \
-            --generic ${{ needs.information.outputs.version }}
+            --target . \
+            --addon
 
   publish:
     name: Publish add-on
@@ -83,7 +83,7 @@ jobs:
         with:
           args: |
             --all \
-            --target /data \
-            --generic ${{ needs.information.outputs.version }} \
-            --docker-hub-check \
-            --docker-hub ghcr.io/${{ github.repository_owner }}
+            --target . \
+            --addon \
+            --docker-hub ghcr.io/${{ github.repository_owner }}/urnetwork-addon \
+            --push
