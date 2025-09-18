@@ -1,79 +1,57 @@
 # URnetwork Provider Add-on
 
-URnetwork 社群提供者插件讓你的 Home Assistant 成為 URnetwork 網路的一部分，共享網路資源並賺取收益。
+**Languages:** [English](README.md) | [中文](README_CN.md) | [日本語](README_JP.md)
 
-## 功能特色
+The URnetwork community provider add-on allows your Home Assistant to become part of the URnetwork, sharing network resources and earning rewards.
 
-- 🌐 成為 URnetwork 社群提供者
-- 💰 透過共享網路資源賺取收益
-- 📊 即時監控連線狀態和統計資料
-- 🔒 安全的認證機制
-- 🎛️ 簡單易用的 Web 管理介面
+## Features
 
-## 安裝步驟
+- 🌐 Become a URnetwork community provider
+- 💰 Earn rewards by sharing network resources
+- 📊 Real-time monitoring of connection status and statistics
+- 🔒 Secure authentication mechanism
+- 🎛️ Simple and easy-to-use web management interface
 
-1. 將此儲存庫加入到你的 Home Assistant Add-on 商店
-2. 安裝 "URnetwork Provider" 插件
-3. 啟動插件
-4. 透過 Web 介面進行初始設定
+## Installation Steps
 
-## 配置選項
+1. Add this repository to your Home Assistant Add-on Store
+2. Install the "URnetwork Provider" add-on
+3. Enable Protection Mode
+4. Start the add-on
+5. Complete initial setup through the web interface
 
-### 基本設定
+## Configuration Options
 
-- **ssl**: 是否啟用 SSL (預設: false)
-- **certfile**: SSL 憑證檔案名稱
-- **keyfile**: SSL 私鑰檔案名稱
-- **web_port**: Web 介面埠號 (預設: 8099)
-- **log_level**: 日誌記錄等級
+### Basic Settings
 
-### 網路設定
+- **ssl**: Enable SSL (default: false)
+- **certfile**: SSL certificate file name
+- **keyfile**: SSL private key file name
+- **web_port**: Web interface port number (default: 8099)
+- **log_level**: Logging level
 
-插件需要網路存取權限來連接 URnetwork 服務。
+## Authentication Process
 
-## 使用方式
+1. Access the add-on's web interface
+2. Enter the authorization code obtained from URnetwork
+3. The system will automatically verify and establish connection
+4. After successful authentication, you can start providing services
 
-1. **初始設定**: 啟動插件後，透過 Web 介面進行認證
-2. **輸入授權碼**: 從 URnetwork 官網取得授權碼並輸入
-3. **監控狀態**: 查看連線狀態和收益統計
-4. **管理設定**: 調整網路共享參數
+## Troubleshooting
 
-## 認證流程
+### Authentication Failed
+- Confirm the authorization code is correct
+- Check network connection
+- Review log files for detailed error information
 
-1. 訪問插件的 Web 介面
-2. 輸入從 URnetwork 取得的授權碼
-3. 系統會自動驗證並建立連線
-4. 認證成功後即可開始提供服務
+## Support
 
-## 故障排除
+For issues or suggestions, please report to GitHub Issues.
 
-### 認證失敗
-- 確認授權碼正確
-- 檢查網路連線
-- 查看日誌檔案了解詳細錯誤
+### Referral Links & Support
+- ur.io referral link: https://ur.io/app?bonus=J8C8CV
+- Buy me a coffee? USDC BASE chain wallet address: 0x040F0037C6a4C28DC504d718Ca9329eFBF6fD8d1
 
-### 連線問題
-- 確認防火牆設定
-- 檢查網路配置
-- 重新啟動插件
-
-### 效能問題
-- 調整資源配置
-- 監控系統負載
-- 檢查網路頻寬
-
-## 支援與回饋
-
-如有問題或建議，請至 GitHub Issues 回報。
-
-## 授權條款
+## License
 
 MIT License
-
-## 版本紀錄
-
-### v1.0.0
-- 初始版本發布
-- 基本認證功能
-- Web 管理介面
-- 狀態監控
