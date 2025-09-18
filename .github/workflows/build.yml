@@ -1,4 +1,4 @@
-name: Build and publish
+name: Build
 
 on:
   push:
@@ -7,76 +7,24 @@ on:
   pull_request:
     branches:
       - main
-  release:
-    types:
-      - published
-
-env:
-  DEFAULT_PYTHON: "3.11"
 
 jobs:
-  information:
-    name: Gather add-on information
+  build:
+    name: Test build
     runs-on: ubuntu-latest
-    outputs:
-      architectures: ${{ steps.information.outputs.architectures }}
-      build: ${{ steps.information.outputs.build }}
-      description: ${{ steps.information.outputs.description }}
-      name: ${{ steps.information.outputs.name }}
-      slug: ${{ steps.information.outputs.slug }}
-      target: ${{ steps.information.outputs.target }}
-      version: ${{ steps.information.outputs.version }}
     steps:
-      - name: Checkout the repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get information
-        id: information
-        uses: home-assistant/actions/helpers/info@master
+      - name: Lint Add-on
+        uses: frenck/action-addon-linter@v2
         with:
           path: "."
 
-  build:
-    name: Build ${{ matrix.arch }} add-on
-    needs: information
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: ${{ fromJson(needs.information.outputs.architectures) }}
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-
-      - name: Build ${{ matrix.arch }} add-on
+      - name: Build Add-on
         uses: home-assistant/builder@master
         with:
           args: |
-            --${{ matrix.arch }} \
-            --target . \
-            --addon
-
-  publish:
-    name: Publish add-on
-    if: github.event_name == 'release'
-    needs: [information, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push add-on
-        uses: home-assistant/builder@master
-        with:
-          args: |
-            --all \
-            --target . \
-            --addon \
-            --docker-hub ghcr.io/${{ github.repository_owner }} \
-            --push
+            --test \
+            --amd64 \
+            --target .
