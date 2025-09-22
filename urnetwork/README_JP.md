@@ -16,7 +16,7 @@ URnetwork Provider アドオンを使用すると、Home Assistant が URnetwork
 
 1. このリポジトリを Home Assistant Add-on ストアに追加
 2. **URnetwork Provider** アドオンをインストール
-3. 保護モードを有効化
+3. 保護モードを無効化
 4. アドオンを起動
 5. Web インターフェースから初期設定を完了
 
