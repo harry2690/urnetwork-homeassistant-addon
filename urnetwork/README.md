@@ -16,7 +16,7 @@ The URnetwork Provider add-on allows your Home Assistant to become part of the U
 
 1. Add this repository to your Home Assistant Add-on Store
 2. Install the **URnetwork Provider** add-on
-3. Enable protection mode
+3. Disable protection mode
 4. Start the add-on
 5. Complete the initial setup through the web interface
 
