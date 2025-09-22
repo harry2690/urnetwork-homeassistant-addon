@@ -16,7 +16,7 @@ URnetwork 社群提供者插件讓你的 Home Assistant 成為 URnetwork 網路�
 
 1. 將此儲存庫加入到你的 Home Assistant Add-on 商店
 2. 安裝 "URnetwork Provider" 插件
-3. 啟動保護模式
+3. 關閉保護模式
 4. 啟動插件
 5. 透過 Web 介面進行初始設定
 
