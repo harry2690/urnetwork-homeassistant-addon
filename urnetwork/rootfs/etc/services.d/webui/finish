@@ -1,3 +1,0 @@
-#!/usr/bin/with-contenv bashio
-
-bashio::log.info "URnetwork Web UI stopped"
